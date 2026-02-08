@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: laura_postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-giveawaybot}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - laura_network
+
+telegram-bot-api:
+  image: aiogram/telegram-bot-api:latest
+  container_name: laura_telegram_api
+  environment:
+    TELEGRAM_API_ID: ${TELEGRAM_API_ID:-}
+    TELEGRAM_API_HASH: ${TELEGRAM_API_HASH:-}
+  volumes:
+    - telegram_bot_api_data:/var/lib/telegram-bot-api
+  ports:
+    - "${TELEGRAM_API_PORT:-8081}:8081"
+  restart: unless-stopped
+  networks:
+    - laura_network
+
+networks:
+  laura_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  telegram_bot_api_data:
