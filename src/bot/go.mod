@@ -1,6 +1,6 @@
 module lirqetes.ru/thelanc3/laura
 
-go 1.25.5
+go 1.25.4
 
 require (
 	github.com/andybalholm/brotli v1.2.0 // indirect
